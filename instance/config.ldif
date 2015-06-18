@@ -1,21 +1,4 @@
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
 version: 1
-
 dn: ou=config
 ou: config
 objectclass: top
@@ -88,6 +71,7 @@ objectclass: ads-base
 objectClass: ads-authenticator
 objectClass: ads-authenticatorImpl
 ads-authenticatorClass: org.apache.directory.server.core.authn.AnonymousAuthenticator
+ads-baseDn: 
 ads-enabled: TRUE
 
 dn: ads-authenticatorid=simpleauthenticator,ou=authenticators,ads-interceptorId=authenticationInterceptor,ou=interceptors,ads-directoryServiceId=default,ou=config
@@ -97,6 +81,7 @@ objectclass: ads-base
 objectClass: ads-authenticator
 objectClass: ads-authenticatorImpl
 ads-authenticatorClass: org.apache.directory.server.core.authn.SimpleAuthenticator
+ads-baseDn: 
 ads-enabled: TRUE
 
 dn: ads-authenticatorid=strongauthenticator,ou=authenticators,ads-interceptorId=authenticationInterceptor,ou=interceptors,ads-directoryServiceId=default,ou=config
@@ -106,7 +91,18 @@ objectclass: ads-base
 objectClass: ads-authenticator
 objectClass: ads-authenticatorImpl
 ads-authenticatorClass: org.apache.directory.server.core.authn.StrongAuthenticator
+ads-baseDn: 
 ads-enabled: TRUE
+
+dn: ads-authenticatorid=delegatingauthenticator,ou=authenticators,ads-interceptorId=authenticationInterceptor,ou=interceptors,ads-directoryServiceId=default,ou=config
+ads-authenticatorid: delegatingauthenticator
+objectclass: top
+objectclass: ads-base
+objectClass: ads-authenticator
+objectClass: ads-authenticatorImpl
+ads-authenticatorClass: org.apache.directory.server.core.authn.DelegatingAuthenticator
+ads-baseDn: 
+ads-enabled: FALSE
 
 dn: ou=passwordPolicies,ads-interceptorId=authenticationInterceptor,ou=interceptors,ads-directoryServiceId=default,ou=config
 objectClass: organizationalUnit
@@ -138,6 +134,7 @@ ads-pwdGraceExpire: 0
 ads-pwdMinDelay: 0
 ads-pwdMaxDelay: 0
 ads-pwdMaxIdle: 0
+ads-pwdValidator: org.apache.directory.server.core.api.authn.ppolicy.DefaultPasswordValidator
 ads-enabled: TRUE
 
 dn: ads-interceptorId=referralInterceptor,ou=interceptors,ads-directoryServiceId=default,ou=config
@@ -257,6 +254,24 @@ ads-interceptorclassname: org.apache.directory.server.core.trigger.TriggerInterc
 ads-interceptorid: triggerInterceptor
 ads-enabled: TRUE
 
+dn: ads-interceptorId=journalInterceptor,ou=interceptors,ads-directoryServiceId=default,ou=config
+objectclass: top
+objectclass: ads-base
+objectclass: ads-interceptor
+ads-interceptororder: 16
+ads-interceptorclassname: org.apache.directory.server.core.journal.JournalInterceptor
+ads-interceptorid: journalInterceptor
+ads-enabled: TRUE
+
+dn: ads-interceptorId=numberInterceptor,ou=interceptors,ads-directoryServiceId=default,ou=config
+objectclass: top
+objectclass: ads-base
+objectclass: ads-interceptor
+ads-interceptororder: 17
+ads-interceptorclassname: org.apache.directory.server.core.number.NumberIncrementingInterceptor
+ads-interceptorId: numberInterceptor
+ads-enabled: FALSE
+
 dn: ou=partitions,ads-directoryServiceId=default,ou=config
 ou: partitions
 objectclass: organizationalUnit
@@ -269,15 +284,10 @@ objectclass: ads-partition
 objectclass: ads-jdbmPartition
 ads-partitionSuffix: ou=system
 ads-jdbmpartitionoptimizerenabled: TRUE
-ads-partitioncachesize: 100
+ads-partitioncachesize: 10000
 ads-partitionsynconwrite: TRUE
 ads-partitionid: system
 ads-enabled: TRUE
-ads-contextEntry: dn: ou=system\n
- objectClass: top\n
- objectClass: organizationalUnit\n
- ou: system\n
- description: The System context entry
 
 dn: ou=indexes,ads-partitionId=system,ou=partitions,ads-directoryServiceId=default,ou=config
 ou: indexes
@@ -287,7 +297,7 @@ objectclass: top
 dn: ads-indexAttributeId=apacheRdn,ou=indexes,ads-partitionId=system,ou=partitions,ads-directoryServiceId=default,ou=config
 ads-indexattributeid: apacheRdn
 ads-indexHasReverse: TRUE
-ads-indexcachesize: 100
+ads-indexcachesize: 1000
 objectclass: ads-index
 objectclass: ads-jdbmIndex
 objectclass: ads-base
@@ -393,7 +403,7 @@ ads-partitionSuffix: dc=example,dc=com
 ads-contextentry:: ZG46IGRjPWV4YW1wbGUsZGM9Y29tCmRjOiBleGFtcGxlCm9iamVjdGNsY
  XNzOiBkb21haW4Kb2JqZWN0Y2xhc3M6IHRvcAoK
 ads-jdbmpartitionoptimizerenabled: TRUE
-ads-partitioncachesize: 100
+ads-partitioncachesize: 10000
 ads-partitionsynconwrite: TRUE
 ads-partitionid: example
 ads-enabled: TRUE
@@ -751,6 +761,14 @@ objectclass: ads-base
 objectclass: top
 ads-enabled: TRUE
 
+dn: ads-extendedOpId=whoAmIHandler,ou=extendedOpHandlers,ads-serverId=ldapServer,ou=servers,ads-directoryServiceId=default,ou=config
+ads-extendedOpId: whoAmIHandler
+ads-extendedOpHandlerclass: org.apache.directory.server.ldap.handlers.extended.WhoAmIHandler
+objectclass: ads-extendedOpHandler
+objectclass: ads-base
+objectclass: top
+ads-enabled: TRUE
+
 dn: ou=saslMechHandlers,ads-serverId=ldapServer,ou=servers,ads-directoryServiceId=default,ou=config
 ou: saslMechHandlers
 objectclass: organizationalUnit
@@ -805,3 +823,4 @@ objectclass: ads-base
 objectclass: top
 ads-saslMechName: SIMPLE
 ads-enabled: TRUE
+
