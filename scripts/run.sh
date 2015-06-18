@@ -17,5 +17,9 @@ if [ ! -d ${APACHEDS_INSTANCE_DIRECTORY} ]; then
     chown -v -R ${APACHEDS_USER}:${APACHEDS_GROUP} ${APACHEDS_INSTANCE_DIRECTORY}
 fi
 
+# Clean left over pid file
+pidFile=${APACHEDS_INSTANCE_DIRECTORY}/run/apacheds-${APACHEDS_INSTANCE}.pid
+[[ -e $pidFile ]] && rm $pidFile
+
 # Execute the server in console mode and not as a daemon.
 /opt/apacheds-${APACHEDS_VERSION}/bin/apacheds console ${APACHEDS_INSTANCE}
