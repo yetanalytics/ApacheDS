@@ -22,4 +22,5 @@ pidFile=${APACHEDS_INSTANCE_DIRECTORY}/run/apacheds-${APACHEDS_INSTANCE}.pid
 [[ -e $pidFile ]] && rm $pidFile
 
 # Execute the server in console mode and not as a daemon.
-/opt/apacheds-${APACHEDS_VERSION}/bin/apacheds console ${APACHEDS_INSTANCE}
+cd /opt/apacheds-${APACHEDS_VERSION}/bin
+./apacheds console ${APACHEDS_INSTANCE}
