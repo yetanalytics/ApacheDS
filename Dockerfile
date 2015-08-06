@@ -56,4 +56,4 @@ RUN mkdir ${APACHEDS_BOOTSTRAP}/cache \
 # ApacheDS wrapper command
 #############################################
 
-CMD ${APACHEDS_CMD}
+CMD exec ${APACHEDS_CMD}
