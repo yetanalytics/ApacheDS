@@ -1,4 +1,4 @@
-FROM debian:wheezy
+FROM debian:jessie
 
 MAINTAINER Henrik Sachse <t3x7m3@posteo.de>
 
