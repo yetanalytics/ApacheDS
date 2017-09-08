@@ -24,3 +24,5 @@ pidFile=${APACHEDS_INSTANCE_DIRECTORY}/run/apacheds-${APACHEDS_INSTANCE}.pid
 # Execute the server in console mode and not as a daemon.
 cd /opt/apacheds-${APACHEDS_VERSION}/bin
 exec ./apacheds console ${APACHEDS_INSTANCE}
+cd /
+ldapadd -v -h localhost:10389 -c -x -D uid=admin,ou=system -w secret -f /bootstrap/conf/nifi-config.ldif
